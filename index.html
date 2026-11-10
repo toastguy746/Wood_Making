@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="color-scheme" content="dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>목공 재단 배치</title>
+<style>
+:root{--bg:#181918;--fg:#EAE8E1;--card:#242522;--input:#30312D;--line:#41413B;--sheet:#6b5d42;--accent:#C58B50;--accent-h:#d39a5f;--run:#39865B;--run-h:#43986a;--muted:#a09d92;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{height:100%}
+body{zoom:0.67;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Malgun Gothic",sans-serif;padding:0;line-height:1.4;display:flex;flex-direction:column;height:100%;overflow:hidden}
+header.top{flex:none;position:relative;border-bottom:1px solid var(--line);padding:15px 32px;margin:0;background:var(--card)}
+.authbox{position:absolute;right:32px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:10px}
+.authbox .small{font-size:22px}
+.authbox button{height:56px;font-size:20px;padding:0 22px}
+h1.logo{display:flex;align-items:center;gap:0;font-size:42px;font-weight:800;letter-spacing:-.5px;line-height:1;margin:0;font-family:"Segoe UI",system-ui,sans-serif}
+h1.logo svg{margin-right:14px;flex:none;width:52px;height:52px}
+h1.logo .w1{color:var(--accent)}
+h1.logo .w2{color:#3fa56a}
+.top .sub{margin:10px 0 0 66px;font-size:15px;letter-spacing:.24em;color:var(--muted);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+.main{display:flex;flex-direction:column;gap:14px}
+.inp{width:100%}
+.side{display:flex;flex-direction:column;gap:12px}
+.acts{display:flex;gap:10px}
+.sec-t{margin:6px 0 0;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--accent);padding-top:12px;border-top:1px solid var(--line)}
+.spec{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+textarea{width:100%;height:110px;box-sizing:border-box;font:15px monospace;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px}
+button{box-sizing:border-box;height:40px;padding:0 16px;font-size:15px;font-weight:600;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--fg);cursor:pointer;transition:background .15s,border-color .15s}
+button:hover:not(:disabled){background:#3a3b36;border-color:#5a5a52}
+button.pri{background:var(--accent);border-color:var(--accent);color:#1b1a17}
+button.pri:hover:not(:disabled){background:var(--accent-h);border-color:var(--accent-h)}
+button.run{flex:1;height:52px;font-size:18px;background:var(--run);border-color:var(--run);color:#fff}
+button.run:hover:not(:disabled){background:var(--run-h);border-color:var(--run-h)}
+button.sec{flex:1;height:52px;font-size:15px;background:transparent;border:1px solid var(--accent);color:var(--accent)}
+button.sec:hover:not(:disabled){background:rgba(197,139,80,.12);border-color:var(--accent-h)}
+button.wide{width:100%;height:46px;font-size:16px}
+#sheets{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.sh{max-width:none;overflow:visible;flex:none}.sh svg{display:block;max-width:none;max-height:none;flex:none;overflow:visible;margin:6px 0;outline:1px solid var(--line)}
+.sh-h{display:flex;align-items:center;gap:10px}
+.sh-h .sn{flex:none;min-width:40px;height:40px;border-radius:6px;background:var(--accent);color:#1b1a17;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center}
+.sh-h .pct{margin-left:auto;font-size:32px;font-weight:700;color:var(--fg)}
+.bar{height:8px;border-radius:4px;background:var(--input);border:1px solid var(--line);margin:10px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--run)}
+.sh .meta{margin-bottom:8px;font-size:20px}
+.tt{font-size:24px;font-weight:700;width:240px;height:48px;box-sizing:border-box;padding:0 10px;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+.row{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:16px;color:var(--muted)}
+.row .no{min-width:22px;text-align:right;font-size:15px;color:var(--muted)}
+.row input{width:104px;height:42px;box-sizing:border-box;padding:0 10px;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px;font-size:16px}
+.row input.c{width:84px;-moz-appearance:textfield}.row input.c::-webkit-inner-spin-button,.row input.c::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+input::placeholder{color:#7d7b72}
+.st{display:flex;flex-direction:column;gap:2px}
+.st button{padding:0;width:34px;height:20px;font-size:10px;line-height:1;border-radius:4px}
+.del{padding:0 12px;color:var(--muted)}
+.row .del{width:42px;padding:0}
+.del:hover:not(:disabled){color:#e5776e}
+.add{margin-top:4px;display:block;margin-left:auto;background:transparent;border-style:dashed}
+#rows .del:disabled{opacity:.3;cursor:not-allowed}
+.pr{display:flex;gap:8px;margin:0;flex-wrap:wrap;align-items:center}
+.pr input,.pr select{height:40px;box-sizing:border-box;padding:0 10px;font-size:15px;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px;min-width:0}
+.pr input{flex:1 1 140px}.pr select{flex:1 1 140px}
+#savebar{position:relative;box-sizing:border-box;background:var(--input);border:1px solid var(--line);border-radius:8px;padding:6px 8px;margin-left:10px}
+#savebar .sb{display:flex;gap:6px;align-items:center}
+#savebar input{width:130px;min-width:0;height:40px;box-sizing:border-box;padding:0 10px;font-size:15px;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+#savebar select{height:40px;padding:0 8px;font-size:15px;background:var(--input);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+#savebar #smsg{position:absolute;right:0;top:calc(100% + 8px);white-space:nowrap;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 8px;z-index:6}#savebar #smsg:empty{display:none}#savebar button{height:56px;font-size:20px;padding:0 22px}#savebar input,#savebar select{height:52px;font-size:19px}#savebar input{width:170px}
+.vsep{border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:520px){.authbox{position:static;transform:none;margin-top:8px;flex-wrap:wrap}.acts{flex-direction:column}#savebar .sb{flex-wrap:wrap}}
+#printArea{display:none}
+@media print{
+  @page{margin:8mm}
+  body>*:not(#printArea){display:none!important}
+  body{padding:0!important;background:#fff!important;display:block!important;height:auto!important;overflow:visible!important}
+  #printArea{display:block!important}
+  #printArea img{display:block;width:100%;max-height:calc(100vh - 4px);object-fit:contain;page-break-after:always;break-after:page}
+  #printArea img:last-child{page-break-after:auto;break-after:auto}
+}
+.warn{color:#e5776e;font-size:14px}.small{font-size:13.5px;color:var(--muted)}
+.netlify-badge{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+
+.app{flex:1;display:flex;min-height:0;position:relative}
+#lockall{position:absolute;top:16px;right:36px;z-index:5;width:56px;height:56px;padding:0;border-radius:50%;background:#000;border:2px solid #fff;font-size:24px;line-height:1}
+#lockall:hover:not(:disabled){background:#222;border-color:#fff}
+/*왼쪽 편집 칸 크기*/
+#left{width:460px;zoom:1.35;flex:none;box-sizing:border-box;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:14px}
+
+#left .spec{margin:0}
+#left .foot{margin-top:auto;text-align:center;padding-top:8px}
+#left .row{gap:5px}
+
+/*왼쪽 편집 칸 입력 크기*/
+#left .row input{width:110px;padding:0 8px}
+#left .row input.c{width:80px}
+
+#left .row .del{width:36px}
+#left button.sec{font-size:14px;padding:0 8px}
+#stage{flex:1;min-width:0;display:flex;overflow:auto;padding:24px 24px 23px;box-sizing:border-box}
+#sheets{margin:auto;justify-content:center}
+#sheets>.small{flex-basis:100%;text-align:center}
+@media (max-width:860px){
+  #lockall{position:fixed;top:auto;bottom:12px;right:12px}
+  body{display:block;height:auto;overflow:auto}
+  .app{display:block}
+  #left{width:auto;overflow:visible;border-right:0;border-bottom:1px solid var(--line)}
+  #stage{display:block;overflow:visible;padding:16px 12px 130px}
+  #sheets{margin:0;justify-content:flex-start}
+}
+</style></head><body>
+<header class="top"><h1 class="logo"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="6" width="36" height="28" rx="6" fill="#b9814a"/><path d="M6 15c8-4 20 4 28 0M6 21c8-4 20 4 28 0M6 27c8-4 20 4 28 0" fill="none" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="2" x2="20" y2="38" stroke="#000" stroke-width="5" stroke-linecap="round"/><line x1="20" y1="2" x2="20" y2="38" stroke="#ffe600" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round"/></svg><span class="w1">Wood</span><span class="w2">Making</span></h1><div class="sub">WOOD CUTTING OPTIMIZER</div>
+<div class="authbox"><span id="authtxt" class="small">게스트 · 이 기기에만 저장</span><button id="authbtn" class="del" onclick="authBtn()">로그인</button><div id="savebar"><div class="sb" id="sbmain"><button class="pri" onclick="sbOpen('d')">다운로드</button><button onclick="sbOpen('p')">인쇄</button></div><div class="sb" id="sbopt" style="display:none"><input id="iname" placeholder="파일 이름"><select id="ifmt"><option value="png">PNG</option><option value="jpg">JPG</option></select><button class="pri" id="sbgo" onclick="sbGo()">저장</button><button class="del" onclick="sbClose()" title="닫기" aria-label="닫기">✕</button></div><div id="smsg" class="small"></div></div></div></header>
+<div class="app"><aside id="left">
+<div class="small" style="margin-bottom:12px">가로 · 세로 · 개수만 입력하세요 (번호는 자동, 단위 mm)</div>
+<div class="main">
+<div class="inp"><div id="rows"></div>
+<button class="add" onclick="addRow()">+ 줄 추가</button></div>
+<div class="vsep side">
+<div class="acts">
+<button class="run" onclick="run()">배치하기</button>
+<button class="sec" onclick="run(true)">다른 방식으로 재배치(R)</button></div>
+<div id="msg" class="warn"></div>
+<h2 class="sec-t">작업 관리</h2>
+<div class="pr"><input id="pname" placeholder="작업 이름 (예: 책상)"><button class="pri" onclick="pjSave()">저장</button></div>
+<div class="pr"><select id="plist" onchange="pjLoad()"></select><button onclick="pjLoad()">불러오기</button><button class="del" onclick="pjDel()">삭제</button></div>
+<div id="pmsg" class="small"></div></div>
+</div>
+<p class="spec">원장 1220 × 2440 · 판 방향 가로형 · 결 방향 가로 ↔ · 톱날 3mm (고정)</p>
+<input type="hidden" id="W" value="1220"><input type="hidden" id="H" value="2440"><input type="hidden" id="K" value="3"><input type="hidden" id="R" value="h"><input type="hidden" id="G" value="h">
+<div class="small foot">문의 : <a href="mailto:toastguy8@gmail.com" style="color:inherit">toastguy8@gmail.com</a></div>
+</aside>
+<main id="stage"><div id="sheets"></div></main><button id="lockall" onclick="toggleAll()" title="전체 잠금">🔓</button></div>
+<div id="printArea"></div>
+<div id="lg" style="display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+<div class="card" style="position:relative;max-width:560px;width:100%;margin:0;padding:44px 36px;text-align:center"><button class="del" onclick="loginPopup(false)" title="닫기" aria-label="닫기" style="position:absolute;top:12px;right:12px;width:52px;height:52px;padding:0;font-size:26px;line-height:1">✕</button>
+<div style="font-size:48px;font-weight:800;letter-spacing:-1px;margin-bottom:14px"><span style="color:#b9814a">Wood</span><span style="color:#2e9e5b">Making</span></div>
+<p class="small" style="margin:0 0 28px;font-size:20px;line-height:1.5">로그인하면 저장한 작업이 내 계정에 보관돼서<br>다른 기기에서도 불러올 수 있어요.</p>
+<button class="pri wide" style="height:68px;font-size:24px" onclick="authToggle()">구글로 로그인</button>
+<button class="wide" style="margin-top:14px;height:68px;font-size:24px" onclick="guestGo()">게스트로 이용</button>
+<div id="lgmsg" class="warn" style="margin-top:14px;font-size:18px"></div>
+</div></div>
+<script>
+const RED='fill="#ff2a2a" stroke="#000" stroke-width="0.5" font-weight="700"';
+const NAMES=[]; // 판 이름(수정한 것)
+const FIX=[]; // 판 고정 여부(고정된 판은 재배치에서 제외)
+const escA=t=>String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+const RS=32; // 빨간 숫자 크기(항상 일정)
+const COL=['#2e9e5b','#f08a24','#3b82d6','#d6453b','#8e5bd0','#e0b81d','#1fa7a7','#d6559b','#7a9a2a','#8a6a4a'];
+function pack(items,W,H,k,m,fl){
+  const S=[{free:[{x:0,y:0,w:W,h:H,cut:null}],p:[],cuts:[]}];
+  for(const it of items){
+    let done=false;
+    for(const s of S){ if(place(s,it,k,m,fl)){done=true;break;} }
+    if(!done){const s={free:[{x:0,y:0,w:W,h:H,cut:null}],p:[],cuts:[]};S.push(s);place(s,it,k,m,fl);}
+  }
+  return S;
+}
+function place(s,it,k,m=0,fl=false){
+  let bi=-1,bs=1e9;
+  s.free.forEach((f,i)=>{ if(it.w<=f.w&&it.h<=f.h){const dw=f.w-it.w,dh=f.h-it.h,sc=m===1?Math.max(dw,dh):m===2?f.w*f.h-it.w*it.h:m===3?f.y*100000+f.x:Math.min(dw,dh); if(sc<bs){bs=sc;bi=i;}}});
+  if(bi<0)return false;
+  const f=s.free.splice(bi,1)[0];
+  s.p.push({...it,x:f.x,y:f.y});
+  const rw=f.w-it.w,rh=f.h-it.h,n=[];
+  const hz=(rw<rh)!==fl; // true: 가로 절단을 먼저, false: 세로 절단을 먼저
+  const mkH=w=>rh>0?{d:'h',x1:f.x,y1:f.y+it.h+k/2,x2:f.x+w,y2:f.y+it.h+k/2}:null;
+  const mkV=h=>rw>0?{d:'v',x1:f.x+it.w+k/2,y1:f.y,x2:f.x+it.w+k/2,y2:f.y+h}:null;
+  let c1,c2;
+  if(hz){c1=mkH(f.w);c2=mkV(it.h);}else{c1=mkV(f.h);c2=mkH(it.w);}
+  if(c1){c1.par=f.cut||null;s.cuts.push(c1);}
+  if(c2){c2.par=c1||f.cut||null;s.cuts.push(c2);}
+  const cR=hz?c2:c1,cB=hz?c1:c2; // 오른쪽/아래쪽 남는 조각을 만든 절단선
+  if(hz){ n.push({x:f.x+it.w+k,y:f.y,w:rw-k,h:it.h,cut:cR},{x:f.x,y:f.y+it.h+k,w:f.w,h:rh-k,cut:cB}); }
+  else { n.push({x:f.x+it.w+k,y:f.y,w:rw-k,h:f.h,cut:cR},{x:f.x,y:f.y+it.h+k,w:it.w,h:rh-k,cut:cB}); }
+  n.forEach(r=>{if(r.w>0&&r.h>0)s.free.push(r);});
+  return true;
+}
+
+/* ───── 남은 공간을 최소한의 사각형으로 합치기 ─────
+   1) 부재 배치가 끝난 판에서, 부재(+톱날 두께)가 차지한 곳을 뺀 나머지를 격자로 만들고
+   2) 그 나머지를 가장 적은 수의 사각형으로 나눈 뒤
+   3) 사각형끼리 맞닿는 면은 톱날 두께만큼 깎아서 실제 재단 가능한 크기로 만든다 */
+function strips(g,X,Y){ // 가로줄 단위로 만들고 같은 폭이면 위아래로 합침
+  const out=[];let open=[];
+  for(let i=0;i<=g.length;i++){
+    const runs=[];
+    if(i<g.length){let j=0;const row=g[i];while(j<row.length){if(!row[j]){j++;continue;}const a=j;while(j<row.length&&row[j])j++;runs.push({a,b:j,used:false});}}
+    const next=[];
+    open.forEach(o=>{
+      const r=runs.find(r=>!r.used&&r.a===o.a&&r.b===o.b);
+      if(r){r.used=true;next.push(o);}
+      else out.push({x:X[o.a],y:Y[o.i0],w:X[o.b]-X[o.a],h:Y[i]-Y[o.i0]});
+    });
+    runs.forEach(r=>{if(!r.used)next.push({a:r.a,b:r.b,i0:i});});
+    open=next;
+  }
+  return out;
+}
+function stripsCol(g,X,Y){ // 세로줄 단위(전치해서 같은 방식 적용)
+  const R=g.length,C=R?g[0].length:0;
+  const t=Array.from({length:C},(_,j)=>Array.from({length:R},(_,i)=>g[i][j]));
+  return strips(t,Y,X).map(r=>({x:r.y,y:r.x,w:r.h,h:r.w}));
+}
+function greedyBig(g,X,Y){ // 가장 큰 사각형부터 계속 떼어냄
+  const R=g.length,C=R?g[0].length:0,m=g.map(r=>r.slice()),out=[];
+  for(;;){
+    const dn=Array.from({length:R+1},()=>new Array(C).fill(0));
+    for(let i=R-1;i>=0;i--)for(let j=0;j<C;j++)dn[i][j]=m[i][j]?dn[i+1][j]+1:0;
+    let best=null,ba=0;
+    for(let i=0;i<R;i++)for(let j=0;j<C;j++){
+      if(!m[i][j])continue;
+      let md=1e9;
+      for(let j2=j;j2<C&&m[i][j2];j2++){
+        md=Math.min(md,dn[i][j2]);
+        const a=(X[j2+1]-X[j])*(Y[i+md]-Y[i]);
+        if(a>ba){ba=a;best={i,j,j2,md};}
+      }
+    }
+    if(!best)break;
+    out.push({x:X[best.j],y:Y[best.i],w:X[best.j2+1]-X[best.j],h:Y[best.i+best.md]-Y[best.i]});
+    for(let i=best.i;i<best.i+best.md;i++)for(let j=best.j;j<=best.j2;j++)m[i][j]=false;
+  }
+  return out;
+}
+function kerfTrim(rs,k){ // 서로 맞닿은 면은 작은 쪽을 톱날 두께만큼 깎음
+  rs.sort((a,b)=>b.w*b.h-a.w*a.h);
+  const o=rs.map(r=>({...r}));
+  const res=rs.map(()=>({l:0,r:0,t:0,b:0}));
+  for(let b=1;b<rs.length;b++){
+    const B=o[b],f=res[b];
+    for(let a=0;a<b;a++){
+      const A=o[a];
+      const yo=Math.min(A.y+A.h,B.y+B.h)-Math.max(A.y,B.y);
+      const xo=Math.min(A.x+A.w,B.x+B.w)-Math.max(A.x,B.x);
+      if(yo>0){ if(A.x+A.w===B.x)f.l=k; else if(B.x+B.w===A.x)f.r=k; }
+      if(xo>0){ if(A.y+A.h===B.y)f.t=k; else if(B.y+B.h===A.y)f.b=k; }
+    }
+  }
+  return rs.map((r,i)=>{const f=res[i];return{x:r.x+f.l,y:r.y+f.t,w:r.w-f.l-f.r,h:r.h-f.t-f.b};}).filter(r=>r.w>0&&r.h>0);
+}
+function leftover(p,W,H,k){
+  const occ=p.map(q=>({x0:Math.max(0,q.x-k),y0:Math.max(0,q.y-k),x1:Math.min(W,q.x+q.w+k),y1:Math.min(H,q.y+q.h+k)}));
+  const xs=new Set([0,W]),ys=new Set([0,H]);
+  occ.forEach(o=>{xs.add(o.x0);xs.add(o.x1);ys.add(o.y0);ys.add(o.y1);});
+  const X=[...xs].sort((a,b)=>a-b),Y=[...ys].sort((a,b)=>a-b);
+  const xi=new Map(X.map((v,i)=>[v,i])),yi=new Map(Y.map((v,i)=>[v,i]));
+  const g=Array.from({length:Y.length-1},()=>new Array(X.length-1).fill(true));
+  occ.forEach(o=>{
+    for(let i=yi.get(o.y0);i<yi.get(o.y1);i++)for(let j=xi.get(o.x0);j<xi.get(o.x1);j++)g[i][j]=false;
+  });
+  const cands=[greedyBig(g,X,Y),strips(g,X,Y),stripsCol(g,X,Y)];
+  let best=cands[0];
+  for(const c of cands)if(c.length<best.length)best=c; // 개수가 가장 적은 방식 선택(동률이면 큰 것부터 뗀 방식)
+  return kerfTrim(best,k);
+}
+
+let LAST=null;const HIST=[],REDO=[];
+function numberize(S,keep){ // 부재 번호 1-1, 1-2 ... (고정된 판의 번호는 유지, 나머지는 비는 번호를 읽는 순서대로)
+  const used={};
+  S.forEach((s,i)=>{if(keep[i])s.p.forEach(q=>{(used[q.id]=used[q.id]||new Set()).add(q.n);});});
+  const nx={};
+  S.forEach((s,i)=>{if(keep[i])return;
+    s.p.sort((a,b)=>a.y-b.y||a.x-b.x);
+    s.p.forEach(q=>{const u=used[q.id]=used[q.id]||new Set();let n=nx[q.id]||1;while(u.has(n))n++;q.n=n;u.add(n);nx[q.id]=n+1;});
+  });
+}
+const sig=S=>S.map(s=>s.p.map(q=>[q.id,q.x,q.y,q.w,q.h].join(",")).sort().join(";")).join("|");
+function run(alt){
+  autosave();
+  let W=+document.getElementById('W').value,H=+document.getElementById('H').value;const k=+document.getElementById('K').value||0;
+  if(document.getElementById('R').value==='h')[W,H]=[H,W]; // 판 90° 회전
+  const msg=document.getElementById('msg');msg.textContent='';if(!alt)FIX.length=0;
+  let items=[],bad=[];const need={};
+  document.querySelectorAll('#rows .row').forEach((r,ri)=>{
+    const v=[...r.querySelectorAll('input')].map(i=>+i.value);
+    if(!(v[0]>0&&v[1]>0&&v[2]>0))return;
+    const id=ri+1,a=v[0],b=v[1],c=v[2];
+    const gh=document.getElementById('G').value==='h';
+    // 긴 변을 결과 평행하게: 세로 결이면 긴 변이 세로, 가로 결이면 긴 변이 가로
+    const w=gh?Math.max(a,b):Math.min(a,b),h=gh?Math.min(a,b):Math.max(a,b);
+    if(w>W||h>H){bad.push(id);return;}
+    need[id]={w,h,c:Math.ceil(c)};for(let i=0;i<c;i++)items.push({id,w,h,n:i+1});
+  });
+  if(bad.length)msg.textContent='원장보다 큰 부재(번호 '+bad.join(', ')+')는 제외했습니다.';
+  if(!items.length){FIX.length=0;render([{p:[],free:[{x:0,y:0,w:W,h:H}]}],W,H);return;}
+  // 판 고정: 고정된 판은 그대로 두고, 나머지 부재만 다시 배치
+  const prev=HIST[HIST.length-1];let fixedS=[];
+  if(alt&&prev&&prev.W===W&&prev.H===H){
+    const rem={};Object.keys(need).forEach(id=>rem[id]=need[id].c);
+    prev.S.forEach((s,i)=>{
+      if(!FIX[i])return;
+      const t={...rem};let ok=true;
+      for(const q of s.p){const nd=need[q.id];if(!nd||nd.w!==q.w||nd.h!==q.h||!(t[q.id]>0)){ok=false;break;}t[q.id]--;}
+      if(ok){Object.assign(rem,t);fixedS.push(i);}else FIX[i]=false;
+    });
+  }else FIX.length=0;
+  if(fixedS.length){const t={};fixedS.forEach(i=>prev.S[i].p.forEach(q=>{t[q.id]=(t[q.id]||0)+1;}));items=items.filter(it=>{if(t[it.id]>0){t[it.id]--;return false;}return true;});}
+  const sorts=[(a,b)=>b.w*b.h-a.w*a.h,(a,b)=>b.h-a.h||b.w-a.w,(a,b)=>b.w-a.w||b.h-a.h,(a,b)=>(b.w+b.h)-(a.w+a.h)];
+  let best=null,bk=null;const cands=[];
+  const test=(arr,m,fl)=>{const r=pack(arr,W,H,k,m,fl);const last=r[r.length-1].p.reduce((t,q)=>t+q.w*q.h,0);const key=r.length*1e9+last;if(alt)cands.push({r,key});if(bk===null||key<bk){bk=key;best=r;}};
+  const rm=()=>alt?Math.random()*4|0:0,rf=()=>alt?Math.random()<0.5:false;
+  sorts.forEach(f=>test([...items].sort(f),rm(),rf()));
+  for(let t=0;t<400;t++){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}test(a,rm(),rf());}
+  if(alt){const n=Math.min(...cands.map(c=>c.r.length));
+    let pool=cands.filter(c=>c.r.length===n).sort((a,b)=>a.key-b.key);
+    const seen=new Set(),uniq=[];pool.forEach(c=>{const g=sig(c.r);if(!seen.has(g)){seen.add(g);uniq.push(c);}});
+    const diff=uniq.filter(c=>sig(c.r)!==LAST).slice(0,12);
+    const pick=(diff.length?diff:uniq)[Math.random()*(diff.length?diff:uniq).length|0];
+    best=pick.r;}
+  // 배치가 끝난 뒤, 남은 공간을 최소한의 사각형으로 다시 계산
+  best.forEach(s=>{s.free=leftover(s.p,W,H,k);});
+  best=best.filter(s=>s.p.length);
+  if(fixedS.length){
+    const fs=new Set(fixedS),out=[],nf=[],nn=[],queue=best.slice(),oldN=NAMES.slice();
+    for(let i=0;i<prev.S.length;i++){
+      if(fs.has(i)){const o=prev.S[i];out.push({...o,p:o.p.map(x=>({...x}))});nf.push(true);nn.push(oldN[i]);}
+      else if(queue.length){out.push(queue.shift());nf.push(false);nn.push(oldN[i]);}
+    }
+    while(queue.length){out.push(queue.shift());nf.push(false);nn.push(undefined);}
+    FIX.length=0;nf.forEach(v=>FIX.push(v));NAMES.length=0;nn.forEach(v=>NAMES.push(v));
+    best=out;
+  }
+  numberize(best,fixedS.length?FIX:[]);
+  LAST=sig(best);
+  REDO.length=0;HIST.push({S:best,W,H,fix:[...FIX]});if(HIST.length>50)HIST.shift();
+  render(best,W,H);
+}
+function tg(b,i){const on=FIX[i]=!FIX[i];b.style.background=on?'#ffe600':'rgba(255,255,255,.85)';b.closest('.sh').style.borderColor=on?'#ffe600':'';const h=HIST[HIST.length-1];if(h)h.fix=[...FIX];syncAll();}
+function syncAll(){const n=document.querySelectorAll('#sheets .sh').length,b=document.getElementById('lockall');if(!b)return;let all=n>0;for(let i=0;i<n;i++)if(!FIX[i])all=false;b.textContent=all?'🔒':'🔓';b.title=all?'전체 잠금 해제':'전체 잠금';}
+function toggleAll(){const cards=[...document.querySelectorAll('#sheets .sh')];if(!cards.length)return;const on=!cards.every((_,i)=>FIX[i]);cards.forEach((c,i)=>{FIX[i]=on;c.querySelector('.gt').style.background=on?'#ffe600':'rgba(255,255,255,.85)';c.style.borderColor=on?'#ffe600':'';});const h=HIST[HIST.length-1];if(h)h.fix=[...FIX];syncAll();}
+function undo(){
+  if(HIST.length<2)return;
+  REDO.push(HIST.pop());const h=HIST[HIST.length-1];LAST=sig(h.S);FIX.length=0;(h.fix||[]).forEach(v=>FIX.push(v));
+  document.getElementById('msg').textContent='';
+  render(h.S,h.W,h.H);
+}
+function redo(){
+  if(!REDO.length)return;
+  const h=REDO.pop();HIST.push(h);LAST=sig(h.S);FIX.length=0;(h.fix||[]).forEach(v=>FIX.push(v));
+  document.getElementById('msg').textContent='';
+  render(h.S,h.W,h.H);
+}
+document.addEventListener('keydown',e=>{
+  const c=e.ctrlKey||e.metaKey;
+  if(c&&!e.shiftKey&&e.key.toLowerCase()==='y'&&REDO.length){e.preventDefault();redo();}
+  else if(!c&&!e.altKey&&e.key.toLowerCase()==='r'&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)){e.preventDefault();run(true);}
+});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'){if(HIST.length>1){e.preventDefault();undo();}else if(e.repeat)e.preventDefault();}});
+const PX=0.55; // 1mm = 0.5px → 판은 항상 원장 크기 그대로(2440:1220)
+function render(S,W,H){
+  const box=document.getElementById('sheets');box.innerHTML='';
+  S.forEach((s,i)=>{
+    const used=s.p.reduce((t,q)=>t+q.w*q.h,0),waste=(100-used/(W*H)*100).toFixed(1);
+    let g='';
+    s.p.forEach(q=>{
+      const fs=Math.max(12,Math.min(q.w/9,40)),lf=RS;
+      g+=`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" fill="${COL[(q.id-1)%COL.length]}"/>`+
+      `<text x="${q.x+q.w/2}" y="${q.y+q.h/2+fs*0.45}" text-anchor="middle" font-size="${fs*1.3}" font-weight="700" fill="#fff" stroke="#000" stroke-width="0.6">${q.id}-${q.n}</text>`+
+      `<text x="${q.x+q.w/2}" y="${q.y+lf*1.15}" text-anchor="middle" font-size="${lf}" ${RED}>${q.w}</text>`+
+      `<text x="${q.x+q.w-6}" y="${q.y+q.h/2+lf*0.35}" text-anchor="end" font-size="${lf}" ${RED}>${q.h}</text>`;
+    });
+    (s.free||[]).forEach(f=>{
+      if(f.w<=0||f.h<=0)return;
+      g+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="var(--sheet)"/>`;
+      if(f.w<80||f.h<80)return;
+      const lf=RS;
+      g+=`<text x="${f.x+f.w/2}" y="${f.y+lf*1.15}" text-anchor="middle" font-size="${lf}" ${RED}>${f.w}</text>`+
+      `<text x="${f.x+f.w-6}" y="${f.y+f.h/2+lf*0.35}" text-anchor="end" font-size="${lf}" ${RED}>${f.h}</text>`;
+    });
+    const d=document.createElement('div');d.className='sh card';
+    d.innerHTML=`<div class="sh-h"><span class="sn">${i+1}</span><input class="tt" value="${escA(NAMES[i]||(i+1)+'번째 판')}" oninput="NAMES[${i}]=this.value"> <span class="pct">${(100-waste).toFixed(1)}%</span></div><div class="bar"><i style="width:${(100-waste).toFixed(1)}%"></i></div><div class="small meta">사용 ${(100-waste).toFixed(1)}% · 버려지는 부분 ${waste}% · ${document.getElementById('G').value==='h'?'↔':'↕'} 결 방향</div>`+
+      `<div style="position:relative;display:block;width:fit-content;margin:6px 0"><svg style="margin:0" viewBox="0 0 ${W} ${H}" width="${W*PX}" height="${H*PX}"><rect x="0" y="0" width="${W}" height="${H}" fill="#000"/>${g}</svg>`+
+      `<button class="gt" title="판 고정 켜기/끄기 (고정한 판은 재배치에서 제외)" onclick="tg(this,${i})" style="position:absolute;top:10px;right:10px;width:28px;height:28px;padding:0;border-radius:50%;border:2px solid #000;box-shadow:0 0 0 2px #fff;background:${FIX[i]?'#ffe600':'rgba(255,255,255,.85)'}"></button></div>`;
+    if(FIX[i])d.style.borderColor='#ffe600';
+    box.appendChild(d);
+  });
+  const sum=document.createElement('div');sum.className='small';
+  sum.textContent=S[0].p.length?'총 '+S.length+'장 사용 · 판 오른쪽 위 버튼으로 판 고정 (고정한 판은 재배치에서 제외)':'가로·세로·개수를 입력하면 여기에 배치됩니다.';box.appendChild(sum);syncAll();
+}
+function addRow(a,b,c){
+  const d=document.createElement('div');d.className='row';
+  d.innerHTML='<b class="no"></b><span>.</span><input type="number" min="1" placeholder="가로" value="'+(a||'')+'"><span>x</span><input type="number" min="1" placeholder="세로" value="'+(b||'')+'"><span>x</span><input type="number" class="c" min="0" placeholder="개수" value="'+(c||'')+'"><span class="st"><button onclick="step(this,1)">▲</button><button onclick="step(this,-1)">▼</button></span><button class="del" onclick="this.parentNode.remove();renum()">✕</button>';
+  document.getElementById('rows').appendChild(d);renum();
+}
+function step(btn,d){
+  const i=btn.closest('.row').querySelector('input.c');
+  i.value=Math.max(0,(+i.value||0)+d);
+  run();
+}
+function renum(){
+  document.querySelectorAll('#rows .row .no').forEach((e,i)=>e.textContent=i+1);
+  const n=document.querySelectorAll('#rows .row').length; // 줄이 1개면 삭제 불가
+  document.querySelectorAll('#rows .del').forEach(b=>{b.disabled=n<=1;});
+  autosave();
+}
+document.getElementById('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();run();}});
+/* ───── 저장 / 불러오기 ───── */
+const LS={
+  get(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+};
+const $=id=>document.getElementById(id);
+const pmsg=t=>{$('pmsg').textContent=t;};
+function getRows(){return [...document.querySelectorAll('#rows .row')].map(r=>[...r.querySelectorAll('input')].map(i=>i.value));}
+function setRows(L){$('rows').innerHTML='';(L&&L.length?L:[[]]).forEach(v=>addRow(v[0],v[1],v[2]));}
+function validRows(){return getRows().filter(v=>+v[0]>0&&+v[1]>0&&+v[2]>0);}
+function autosave(){if(typeof INIT!=='undefined'&&INIT)LS.set('cutCurrent',getRows());}
+let CLOUD=null; // 로그인 상태면 {uid,data}, 아니면 null(이 기기에 저장)
+function projs(){
+  if(CLOUD)return CLOUD.data;
+  const p=LS.get('cutProjects');return p&&typeof p==='object'?p:{};
+}
+function saveProjs(p){
+  if(CLOUD){
+    CLOUD.data=p;
+    if(!window.FBsave)return false;
+    window.FBsave(p).catch(()=>pmsg('계정에 저장하지 못했습니다. 인터넷 연결과 로그인을 확인하세요.'));
+    return true;
+  }
+  return LS.set('cutProjects',p);
+}
+function loginPopup(on){$('lg').style.display=on?'flex':'none';if(on)$('lgmsg').textContent='';}
+function guestOn(){try{return sessionStorage.getItem('guest')==='1';}catch(e){return false;}}
+function guestGo(){try{sessionStorage.setItem('guest','1');}catch(e){}loginPopup(false);}
+function authMsg(t){$('lgmsg').textContent=t;pmsg(t);}
+function authBtn(){if(CLOUD)authToggle();else loginPopup(true);}
+function cloudOn(u,data){
+  loginPopup(false);try{sessionStorage.removeItem('guest');}catch(e){}
+  CLOUD={uid:u.uid,data};
+  $('authtxt').textContent=(u.email||u.displayName||'로그인됨')+' · 계정에 저장';
+  $('authbtn').textContent='로그아웃';
+  const loc=LS.get('cutProjects')||{},add=Object.keys(loc).filter(n=>!(n in data));
+  if(add.length&&confirm('이 기기에 저장된 작업 '+add.length+'개('+add.join(', ')+')를 계정으로 옮길까요?')){
+    add.forEach(n=>{data[n]=loc[n];});saveProjs(data);
+  }
+  refreshList();pmsg('');
+}
+function cloudOff(){
+  CLOUD=null;
+  $('authtxt').textContent='게스트 · 이 기기에만 저장';
+  $('authbtn').textContent='로그인';
+  refreshList();pmsg('');
+  if(!guestOn())loginPopup(true);
+}
+function authToggle(){
+  if(window.FBtoggle)window.FBtoggle();
+  else authMsg('로그인 기능을 불러오지 못했습니다. 인터넷 연결을 확인하세요.');
+}
+function refreshList(sel){
+  const p=projs(),names=Object.keys(p),el=$('plist');
+  el.innerHTML=names.length?names.map(n=>'<option></option>').join(''):'<option value="">저장된 작업 없음</option>';
+  if(names.length)[...el.options].forEach((o,i)=>{o.value=o.textContent=names[i];});
+  if(sel&&names.includes(sel))el.value=sel;
+}
+function pjSave(){
+  const name=$('pname').value.trim();
+  if(!name){pmsg('작업 이름을 먼저 입력하세요.');return;}
+  const p=projs();
+  if(p[name]&&!confirm('"'+name+'" 이(가) 이미 있습니다. 덮어쓸까요?'))return;
+  p[name]=getRows();
+  if(saveProjs(p)){refreshList(name);pmsg('"'+name+'" 저장했습니다.');}
+  else pmsg('저장하지 못했습니다. (브라우저 저장소를 사용할 수 없는 환경일 수 있어요)');
+}
+function pjLoad(){
+  const n=$('plist').value,p=projs();
+  if(!n||!p[n]){pmsg('불러올 작업을 선택하세요.');return;}
+  setRows(p[n]);$('pname').value=n;run();
+}
+function pjDel(){
+  const n=$('plist').value,p=projs();
+  if(!n||!p[n])return;
+  if(!confirm('"'+n+'" 을(를) 삭제할까요?'))return;
+  delete p[n];saveProjs(p);refreshList();pmsg('삭제했습니다.');
+}
+/* ───── 이미지 저장 (1장: 이미지 파일 / 2장 이상: zip) ───── */
+/*ZIP-START*/
+const CRC_T=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(d){let c=0xFFFFFFFF;for(let i=0;i<d.length;i++)c=CRC_T[(c^d[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function makeZip(files){ // 압축 없이 묶기(이미지는 이미 압축돼 있음)
+  const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  const now=new Date();
+  const dt=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+  const dd=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+  for(const f of files){
+    const nb=enc.encode(f.name),crc=crc32(f.data),sz=f.data.length;
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(8,0,true);
+    lh.setUint16(10,dt,true);lh.setUint16(12,dd,true);lh.setUint32(14,crc,true);lh.setUint32(18,sz,true);lh.setUint32(22,sz,true);
+    lh.setUint16(26,nb.length,true);lh.setUint16(28,0,true);
+    parts.push(lh.buffer,nb,f.data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);
+    ch.setUint16(12,dt,true);ch.setUint16(14,dd,true);ch.setUint32(16,crc,true);ch.setUint32(20,sz,true);ch.setUint32(24,sz,true);
+    ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+    cen.push(ch.buffer,nb);
+    off+=30+nb.length+sz;
+  }
+  let cs=0;cen.forEach(x=>cs+=x.byteLength);
+  const end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);
+  end.setUint32(12,cs,true);end.setUint32(16,off,true);
+  return new Blob([...parts,...cen,end.buffer],{type:'application/zip'});
+}
+/*ZIP-END*/
+function sheetBlob(svg,jpg){
+  return new Promise((ok,no)=>{
+    const vb=svg.viewBox.baseVal,W=vb.width,H=vb.height;
+    const sheetColor=getComputedStyle(document.documentElement).getPropertyValue('--sheet').trim()||'#efe3c8';
+    const c=svg.cloneNode(true);
+    c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+    c.setAttribute('width',W);c.setAttribute('height',H);
+    c.setAttribute('font-family',"system-ui,'Malgun Gothic',sans-serif");
+    const src=new XMLSerializer().serializeToString(c).replace(/var\(--sheet\)/g,sheetColor);
+    const url=URL.createObjectURL(new Blob([src],{type:'image/svg+xml;charset=utf-8'}));
+    const img=new Image();
+    img.onload=()=>{
+      const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+      const x=cv.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,W,H);x.drawImage(img,0,0,W,H);
+      URL.revokeObjectURL(url);
+      cv.toBlob(b=>b?ok(b):no(new Error('toBlob')),jpg?'image/jpeg':'image/png',0.92);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);no(new Error('img'));};
+    img.src=url;
+  });
+}
+function download(blob,name){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+let SBMODE='d';
+function sbOpen(m){
+  SBMODE=m;$('sbmain').style.display='none';$('sbopt').style.display='flex';
+  $('sbgo').textContent=m==='d'?'저장':'인쇄';$('smsg').textContent='';
+}
+function sbClose(){$('sbopt').style.display='none';$('sbmain').style.display='flex';$('smsg').textContent='';}
+function sbGo(){if(SBMODE==='d')saveImages();else printImages();}
+async function printImages(){
+  const sm=$('smsg');
+  const cards=[...document.querySelectorAll('#sheets .sh')],svgs=cards.map(c=>c.querySelector('svg'));
+  if(!svgs.length||!validRows().length){sm.textContent='인쇄할 배치가 없습니다.';return;}
+  const jpg=$('ifmt').value==='jpg';
+  const base=($('iname').value.trim()||$('pname').value.trim()||'재단배치').replace(/[\\/:*?"<>|]/g,'_');
+  sm.textContent='인쇄 준비 중...';
+  const pa=$('printArea'),urls=[];
+  try{
+    pa.innerHTML='';
+    for(const s of svgs){
+      const url=URL.createObjectURL(await sheetBlob(s,jpg));urls.push(url);
+      const img=new Image();
+      await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url;});
+      pa.appendChild(img);
+    }
+    const oldT=document.title;document.title=base;
+    const done=()=>{document.title=oldT;pa.innerHTML='';urls.forEach(u=>URL.revokeObjectURL(u));window.removeEventListener('afterprint',done);};
+    window.addEventListener('afterprint',done);
+    sm.textContent='';
+    window.print();
+  }catch(e){sm.textContent='인쇄할 이미지를 만들지 못했습니다.';pa.innerHTML='';}
+}
+async function saveImages(){
+  const sm=$('smsg');
+  const cards=[...document.querySelectorAll('#sheets .sh')],svgs=cards.map(c=>c.querySelector('svg'));
+  if(!svgs.length||!validRows().length){sm.textContent='저장할 배치가 없습니다.';return;}
+  const jpg=$('ifmt').value==='jpg',ext=jpg?'jpg':'png';
+  const base=($('iname').value.trim()||$('pname').value.trim()||'재단배치').replace(/[\\/:*?"<>|]/g,'_');
+  sm.textContent='저장 중...';
+  try{
+    if(svgs.length===1){
+      download(await sheetBlob(svgs[0],jpg),base+'.'+ext);
+      sm.textContent=base+'.'+ext+' 저장';
+    }else{
+      const files=[],used=new Set();
+      for(let i=0;i<svgs.length;i++){
+        const b=await sheetBlob(svgs[i],jpg);
+        const t=(cards[i].querySelector('.tt').value.trim()||(i+1)+'번째 판').replace(/[\\/:*?"<>|]/g,'_');
+        let n=t,k=2;while(used.has(n))n=t+' ('+(k++)+')';used.add(n);
+        files.push({name:n+'.'+ext,data:new Uint8Array(await b.arrayBuffer())});
+      }
+      download(makeZip(files),base+'.zip');
+      sm.textContent=base+'.zip 저장 ('+svgs.length+'장)';
+    }
+  }catch(e){sm.textContent='이미지를 만들지 못했습니다.';}
+}
+$('rows').addEventListener('input',autosave);
+let INIT=false;
+refreshList();
+const cur=LS.get('cutCurrent');
+setRows(Array.isArray(cur)?cur:[]);
+INIT=true;
+run();
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app=initializeApp({
+  apiKey:"AIzaSyDMD9Fye48HJF0jt7Ib5zTYTnI00OqYFKs",
+  authDomain:"woodmaiking.firebaseapp.com",
+  projectId:"woodmaiking",
+  storageBucket:"woodmaiking.firebasestorage.app",
+  messagingSenderId:"459750007859",
+  appId:"1:459750007859:web:19c918c99dc70033b32f46"
+});
+const auth=getAuth(app),db=getFirestore(app);
+const ref=uid=>doc(db,'users',uid,'meta','projects');
+// 작업 목록은 중첩 배열을 못 담는 Firestore 특성상 JSON 문자열로 저장
+window.FBsave=p=>setDoc(ref(auth.currentUser.uid),{json:JSON.stringify(p),updated:Date.now()});
+window.FBtoggle=async()=>{
+  if(auth.currentUser){await signOut(auth);return;}
+  try{await signInWithPopup(auth,new GoogleAuthProvider());}
+  catch(e){
+    const c=e&&e.code;
+    if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;
+    authMsg(c==='auth/unauthorized-domain'?'이 사이트 주소가 Firebase 승인된 도메인에 없습니다.':c==='auth/popup-blocked'?'팝업이 차단됐습니다. 팝업을 허용해 주세요.':'로그인하지 못했습니다. ('+(c||'오류')+')');
+  }
+};
+onAuthStateChanged(auth,async u=>{
+  if(!u){cloudOff();return;}
+  try{
+    const s=await getDoc(ref(u.uid));let data={};
+    if(s.exists()){try{data=JSON.parse(s.data().json)||{};}catch(e){}}
+    cloudOn(u,data);
+  }catch(e){pmsg('계정의 작업을 불러오지 못했습니다. Firestore 규칙과 연결을 확인하세요.');}
+});
+</script>
+</body></html>
