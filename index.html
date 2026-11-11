@@ -106,7 +106,7 @@ input::placeholder{color:#7d7b72}
 }
 </style></head><body>
 <header class="top"><h1 class="logo"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="6" width="36" height="28" rx="6" fill="#b9814a"/><path d="M6 15c8-4 20 4 28 0M6 21c8-4 20 4 28 0M6 27c8-4 20 4 28 0" fill="none" stroke="#8a5a2b" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="2" x2="20" y2="38" stroke="#000" stroke-width="5" stroke-linecap="round"/><line x1="20" y1="2" x2="20" y2="38" stroke="#ffe600" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round"/></svg><span class="w1">Wood</span><span class="w2">Making</span></h1><div class="sub">WOOD CUTTING OPTIMIZER</div>
-<div class="authbox"><span id="authtxt" class="small">게스트 · 이 기기에만 저장</span><button id="authbtn" class="del" onclick="authBtn()">로그인</button><div id="savebar"><div class="sb" id="sbmain"><button class="pri" onclick="sbOpen('d')">다운로드</button><button onclick="sbOpen('p')">인쇄</button></div><div class="sb" id="sbopt" style="display:none"><input id="iname" placeholder="파일 이름"><select id="ifmt"><option value="png">PNG</option><option value="jpg">JPG</option></select><button class="pri" id="sbgo" onclick="sbGo()">저장</button><button class="del" onclick="sbClose()" title="닫기" aria-label="닫기">✕</button></div><div id="smsg" class="small"></div></div></div></header>
+<div class="authbox"><span id="authtxt" class="small">게스트 · 이 기기에만 저장</span><button id="authbtn" class="del" onclick="authBtn()">로그인</button><div id="savebar"><div class="sb" id="sbmain"><button class="pri" onclick="sbOpen('d')">다운로드</button><button class="pri" onclick="sbOpen('p')">인쇄</button></div><div class="sb" id="sbopt" style="display:none"><input id="iname" placeholder="파일 이름"><select id="ifmt"><option value="png">PNG</option><option value="jpg">JPG</option></select><button class="pri" id="sbgo" onclick="sbGo()">저장</button><button class="del" onclick="sbClose()" title="닫기" aria-label="닫기">✕</button></div><div id="smsg" class="small"></div></div></div></header>
 <div class="app"><aside id="left">
 <div class="small" style="margin-bottom:12px">가로 · 세로 · 개수만 입력하세요 (번호는 자동, 단위 mm)</div>
 <div class="main">
@@ -386,8 +386,6 @@ function step(btn,d){
 }
 function renum(){
   document.querySelectorAll('#rows .row .no').forEach((e,i)=>e.textContent=i+1);
-  const n=document.querySelectorAll('#rows .row').length; // 줄이 1개면 삭제 불가
-  document.querySelectorAll('#rows .del').forEach(b=>{b.disabled=n<=1;});
   autosave();
 }
 document.getElementById('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();run();}});
